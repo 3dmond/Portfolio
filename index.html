@@ -1,0 +1,186 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edmond Mutisya - Portfolio</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .section-header {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #1a202c;
+    }
+    .smooth-scroll {
+      scroll-behavior: smooth;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-800 smooth-scroll">
+  <!-- Header -->
+  <header class="bg-blue-600 text-white py-6 text-center">
+    <h1 class="text-4xl font-bold">Edmond Mwita Mutisya</h1>
+    <p class="mt-2 text-lg">Versatile Builder | Creative Problem Solver | Tech Enthusiast</p>
+    <nav class="mt-4">
+      <a href="#about" class="mx-4 hover:underline">About</a>
+      <a href="#experience" class="mx-4 hover:underline">Experience</a>
+      <a href="#projects" class="mx-4 hover:underline">Projects</a>
+      <a href="#skills" class="mx-4 hover:underline">Skills</a>
+      <a href="#contact" class="mx-4 hover:underline">Contact</a>
+    </nav>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-4xl mx-auto p-6 space-y-12">
+    <!-- About Section -->
+    <section id="about" class="bg-white p-6 rounded-lg shadow-md">
+      <h2 class="section-header">About Me</h2>
+      <p class="mt-4">
+        I am a versatile builder and creative problem solver with hands-on experience in product sales, customer engagement, and digital creation. I thrive in fast-paced environments, excel at transforming ideas into functional outputs, and bring a sharp eye for opportunity. My approach blends street-smart execution with technical fluency to deliver impactful results.
+      </p>
+    </section>
+
+    <!-- Experience Section -->
+    <section id="experience" class="bg-white p-6 rounded-lg shadow-md">
+      <h2 class="section-header">Experience</h2>
+      <div class="mt-4 space-y-6">
+        <div>
+          <h3 class="text-xl font-semibold">Freelance Sales & Marketing Agent</h3>
+          <p class="text-gray-600">Poa Internet, Nairobi | 2020</p>
+          <ul class="list-disc ml-6 mt-2">
+            <li>Conducted grassroots outreach in Kasarani to drive adoption of home internet services.</li>
+            <li>Converted leads through direct communication, demos, and collaboration with the installation team.</li>
+            <li>Achieved all sales targets and improved territory response rate with optimized pitch structures.</li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-xl font-semibold">Co-Founder & Hustler-in-Chief</h3>
+          <p class="text-gray-600">The Sticker Company (Unofficial Venture) | 2022</p>
+          <ul class="list-disc ml-6 mt-2">
+            <li>Co-founded a creative print venture focused on custom vinyl sticker production and on-foot sales.</li>
+            <li>Managed concept-to-sale processes, including design, hand-cutting, distribution, and client relations.</li>
+            <li>Gained expertise in the economics of hustle, resilience, and creating demand from scratch.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="bg-white p-6 rounded-lg shadow-md">
+      <h2 class="section-header">Projects</h2>
+      <div class="mt-4">
+        <h3 class="text-xl font-semibold">DekaDeko: A Sticker Venture Reimagined</h3>
+        <p class="text-gray-600">Ongoing</p>
+        <ul class="list-disc ml-6 mt-2">
+          <li>Transforming a grassroots sticker hustle into a scalable platform with automation.</li>
+          <li>Experimenting with modular design systems and semi-intelligent inventory handling.</li>
+          <li>Blending digital reach with localized relevance in a low-capital, high-creativity approach.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="bg-white p-6 rounded-lg shadow-md">
+      <h2 class="section-header">Skills</h2>
+      <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <h3 class="text-lg font-semibold">Digital & Technical</h3>
+          <ul class="list-disc ml-6 mt-2">
+            <li>HTML, CSS, JavaScript, Python</li>
+            <li>Automation workflows (scripting, Zapier/Make)</li>
+            <li>Data tools: Excel (advanced), Google Sheets, light scripting</li>
+            <li>Creative tools: Canva, Figma (prototyping), branding, QGIS</li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold">Business & Execution</h3>
+          <ul class="list-disc ml-6 mt-2">
+            <li>Sales: Cold outreach, persuasion, closing</li>
+            <li>Marketing: Digital campaigns, grassroots activations</li>
+            <li>Operations: Lean testing, iteration, team execution</li>
+            <li>Communication: Client engagement, pitching, storytelling</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="bg-white p-6 rounded-lg shadow-md">
+      <h2 class="section-header">Contact</h2>
+      <p class="mt-4">Reach out to discuss opportunities or collaborations:</p>
+      <ul class="list-none mt-2">
+        <li><strong>Email:</strong> <a href="mailto:Edmondmutisya@gmail.com" class="text-blue-600 hover:underline">Edmondmutisya@gmail.com</a></li>
+        <li><strong>Location:</strong> Nairobi, Kenya</li>
+      </ul>
+      <div class="mt-4">
+        <p class="text-sm text-gray-600">Note: Form submission is disabled due to hosting constraints. Please use the email link above.</p>
+        <div class="mt-4">
+          <input type="text" placeholder="Your Name" class="w-full p-2 border rounded-md" disabled>
+          <input type="email" placeholder="Your Email" class="w-full p-2 mt-2 border rounded-md" disabled>
+          <textarea placeholder="Your Message" class="w-full p-2 mt-2 border rounded-md" rows="4" disabled></textarea>
+          <button class="mt-2 px-4 py-2 bg-blue-600 text-white rounded-md opacity-50 cursor-not-allowed">Submit</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white text-center py-4">
+    <p>&copy; 2025 Edmond Mutisya. All rights reserved.</p>
+  </footer>
+
+  <!-- JavaScript for Smooth Scrolling -->
+  <script>
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+          behavior: 'smooth'
+        });
+      });
+    });
+  </script>
+</body>
+</html>
